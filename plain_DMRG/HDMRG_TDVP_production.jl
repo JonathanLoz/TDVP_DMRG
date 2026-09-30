@@ -5,8 +5,8 @@ using ITensorMPS
 using LinearAlgebra
 using JLD2
 
-include("../src/backend/mps.jl")
-include("../src/hamiltonians/generalized_hubbard.jl")
+#include("../src/backend/mps.jl")
+#include("../src/hamiltonians/generalized_hubbard.jl")
 include("../src/analysis/hubbard_dmrg.jl")
 
 # ─── Command line ────────────────────────────────────────────────────────────
@@ -136,10 +136,10 @@ end
 # ─── MPS helpers ──────────────────────────────────────────────────────────────
 
 function extract_sites(psi::MPS)
-    return [siteind(psi, i) for i in 1:length(psi)]
+    return [siteind(psi, i) for i in eachindex(psi)]
 end
 
-conj_mps(psi::MPS) = MPS([conj(psi[j]) for j in 1:length(psi)])
+conj_mps(psi::MPS) = MPS([conj(psi[j]) for j in eachindex(psi)])
 
 # ─── Ground state ─────────────────────────────────────────────────────────────
 
@@ -266,7 +266,7 @@ function run_point()
         siteinds(phi) == sites || @warn "checkpoint site indices differ from the ground state's"
         @info "── Resuming from checkpoint at step $k_done / $nt (t = $(times[k_done]))"
     else
-        phi = MPS([complex(phi0[j]) for j in 1:length(phi0)])
+        phi = MPS([complex(phi0[j]) for j in eachindex(phi0)])
     end
 
     measure!(k) = begin
