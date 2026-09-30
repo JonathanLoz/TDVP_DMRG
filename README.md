@@ -89,7 +89,11 @@ a bilinear (not sesquilinear) contraction, computed as `inner(conj_mps(phi), phi
 julia -t 4 HDMRG_TDVP_production.jl L U V [N_total Sz dt tmax chi cutoff chi_gs PJ]
 julia -t 4 HDMRG_TDVP_production.jl 64 4.0 0.0 64 0 0.05 20 400 1e-9 400
 ```
+After the running start its possible to monitor the status of the run by using the log and the tag together with a tail call as follows 
 
+```bash
+tail -f logs/L64_U4.0_V0.0_N64_Sz0_dt0.05_T20.0_chi400.log
+```
 | argument | meaning | default |
 |---|---|---|
 | `L U V` | sites, on-site and nearest-neighbour interaction | required |
@@ -172,6 +176,7 @@ Both depend only on $`t_{\max}`$ and $L$, never on $\chi$. Runs of one system th
 **In the analysis:**
 
 - *Sum rule* against the run's own $\langle T\rangle$.
+- *Dynamical DMRG.* $\sigma(\omega)$ of the half-filled Hubbard chain from dynamical DMRG [4] (figures for $U = 3, 6, 12$).
 - *Ground-state energies.* Bethe ansatz, $U=4$, infinite chain: $e_0 = -0.57373$ per site in the $`U n_\uparrow n_\downarrow`$ convention, i.e. $-1.57373$ here, and $\langle T\rangle/L = -0.9747$. Open chains differ by boundary corrections of order $1/L$.
 - *Bond dimension.* Compare the $\chi$ runs of one system in the `sigma_chi_*` overlay at the same (`auto`) $\eta$. Signs of truncation: $`\vert C_{JJ}\vert/C_0`$ growing at late $\tau$, a large doubled-vs-direct difference, and features that move or split with $\chi$.
 
@@ -180,3 +185,4 @@ Both depend only on $`t_{\max}`$ and $L$, never on $\chi$. Runs of one system th
 1. S. Takayoshi and T. Giamarchi, Eur. Phys. J. D **76**, 213 (2022).
 2. J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Phys. Rev. B **94**, 165116 (2016).
 3. S. Paeckel *et al.*, Ann. Phys. **411**, 167998 (2019).
+4. E. Jeckelmann, F. Gebhard, and F. H. L. Essler, Phys. Rev. Lett. **85**, 3910 (2000).   (Useful Hubbard comparisons)

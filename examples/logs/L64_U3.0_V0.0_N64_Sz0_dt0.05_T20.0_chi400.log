@@ -1,0 +1,11 @@
+[ Info: ── Ground state (Sz=0, N=64) at χ_gs = 400 ...
+[ Info:   E = -91.71680873783149   maxlinkdim = 400   err = 6.583388638255507e-5
+[ Info:   [Timer] GS completed in 0.045 hours.
+[ Info:   [Memory] after GS: 1.631043584e9 
+[ Info:   [Verification] flux(psi_gs) = QN(("Nf",64,-1),("Sz",0))   (target N = 64, Sz = 0)
+[ Info:   ⟨T⟩ = -69.16357817340756   (f-sum rule: ∫_0^∞ σ dω = −π⟨T⟩/2N = 1.6975296022309418, checked in the analysis)
+[ Info:   [Verification] C0 = ⟨J²⟩ = 72.10793552167215   flux(φ) == flux(ψ0): true   maxlinkdim(φ0) = 400
+[ Info: ── TDVP: 400 steps of dt = 0.05, χ ≤ 400, cutoff = 1.0e-9 (2-site until χ is reached, then 1-site); Krylov (ishermitian = true, eager = true, tol = 1.0e-8, krylovdim = 15)
+[ Info:   t = 0.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.18956   elapsed 2.6 min, remaining ≈ 52.6 min
+[ Info:   t = 1.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.08552   elapsed 5.0 min, remaining ≈ 46.7 min
+[ Info:   t = 2.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.04969   elapsed 7.6 min, remaining ≈ 44.1 min
