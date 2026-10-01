@@ -8,3 +8,29 @@
 [ Info: ── TDVP: 400 steps of dt = 0.05, χ ≤ 400, cutoff = 1.0e-9 (2-site until χ is reached, then 1-site); Krylov (ishermitian = true, eager = true, tol = 1.0e-8, krylovdim = 15)
 [ Info:   t = 0.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.10296   elapsed 3.1 min, remaining ≈ 61.7 min
 [ Info:   t = 1.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.03121   elapsed 5.8 min, remaining ≈ 54.1 min
+[ Info:   t = 2.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.01816   elapsed 9.0 min, remaining ≈ 52.2 min
+[ Info:   t = 3.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.01532   elapsed 36.3 min, remaining ≈ 147.3 min
+[ Info:   t = 4.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.01612   elapsed 56.6 min, remaining ≈ 172.2 min
+[ Info:   t = 5.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02108   elapsed 62.5 min, remaining ≈ 147.5 min
+[ Info:   t = 6.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02229   elapsed 69.1 min, remaining ≈ 129.8 min
+[ Info:   t = 7.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.03061   elapsed 113.6 min, remaining ≈ 172.2 min
+[ Info:   t = 8.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.03996   elapsed 117.6 min, remaining ≈ 145.2 min
+[ Info:   t = 9.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.04733   elapsed 120.4 min, remaining ≈ 121.7 min
+[ Info:   t = 10.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.05735   elapsed 123.7 min, remaining ≈ 102.2 min
+[ Info:   t = 11.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.05819   elapsed 131.4 min, remaining ≈ 88.5 min
+[ Info:   t = 12.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.08247   elapsed 134.2 min, remaining ≈ 73.0 min
+[ Info:   t = 13.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.07682   elapsed 136.9 min, remaining ≈ 59.4 min
+[ Info:   t = 14.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.1271   elapsed 139.9 min, remaining ≈ 47.3 min
+[ Info:   t = 15.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.25473   elapsed 158.1 min, remaining ≈ 40.1 min
+[ Info:   t = 16.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.11029   elapsed 160.9 min, remaining ≈ 29.0 min
+[ Info:   t = 17.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.1176   elapsed 163.8 min, remaining ≈ 18.7 min
+[ Info:   t = 18.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.10968   elapsed 166.5 min, remaining ≈ 9.2 min
+[ Info:   t = 19.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.07417   elapsed 177.4 min, remaining ≈ 0.4 min
+[ Info:   t = 20.0   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.07414   elapsed 177.6 min, remaining ≈ 0.0 min
+[ Info:   [Timer] TDVP completed in 2.959 hours.
+[ Info:   [Memory] after TDVP: 2.169798656e9 
+[ Info:   [Verification] |C_JJ(tmax) doubled − direct| / C0 = 0.0836
+[ Info:   [Verification] ‖φ(tmax)‖ = 0.9999999939845517 (1 up to truncation)   final χ = 400
+[ Info:   Saved → data/tdvp_L64_U6.0_V0.0_N64_Sz0_dt0.05_T20.0_chi400.jld2
+[ Info: All MPS checkpoints deleted for L64_U6.0_V0.0_N64_Sz0_dt0.05_T20.0_chi400.
+[ Info:   [Memory] after production run: 2.169798656e9

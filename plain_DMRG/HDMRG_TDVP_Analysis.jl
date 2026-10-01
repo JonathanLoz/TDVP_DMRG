@@ -160,22 +160,13 @@ end
 close(csv)
 @info "Summary → $(joinpath(adir, "tdvp_summary.csv"))"
 
-# ─── σ(ω) overlay: runs sharing (L, V, N, Sz), labelled by whatever varies (U, χ) ─────
+# ─── σ(ω) overlays: U at fixed (L, V, N, Sz) with the largest χ of each U; χ at fixed U ─────
 
-groups = Dict{Any,Vector{eltype(recs)}}()
-for r in recs; push!(get!(groups, (r.L, r6(r.V), r.N, r.Sz), eltype(recs)[]), r); end
-for (g, rs) in groups
-    length(rs) > 1 || continue
-    L_, V_, N_, Sz_ = g
-    varU = length(unique(r.U for r in rs)) > 1
-    varχ = length(unique(r.χ for r in rs)) > 1
-    key  = varU && varχ ? "Uchi" : varχ ? "chi" : "U"
-    val(r) = key == "chi" ? r.χ : r.U                    # the ordered quantity for the colours
-    lab(r) = key == "Uchi" ? L"U=%$(r.U),\ \chi=%$(r.χ)" : key == "chi" ? L"\chi=%$(r.χ)" : L"U=%$(r.U)"
-    fixed  = key == "chi" ? "L=$(L_),\\ U=$(rs[1].U),\\ V=$(V_),\\ N=$(N_)" :
-             key == "U"   ? "L=$(L_),\\ V=$(V_),\\ N=$(N_),\\ \\chi\\le$(rs[1].χ)" :
-                            "L=$(L_),\\ V=$(V_),\\ N=$(N_)"
-    vals = [val(r) for r in rs]; lo, hi = extrema(vals)
+function overlay(rs, key, fixed, fname)
+    val(r) = key == :chi ? r.χ : r.U                     # the ordered quantity for the colours
+    mixχ   = key == :U && length(unique(r.χ for r in rs)) > 1
+    lab(r) = key == :chi ? L"\chi=%$(r.χ)" : mixχ ? L"U=%$(r.U),\ \chi=%$(r.χ)" : L"U=%$(r.U)"
+    lo, hi = extrema(val.(rs))
     cat = FS.categorical(length(rs))
     with_theme(nogrid) do
         fig = Figure(size=FS.figsize(:single, cb=!cat))
@@ -193,8 +184,26 @@ for (g, rs) in groups
         if cat
             FS.legend!(fig, ax; position=:rt)
         else
-            Colorbar(fig[1, 2], limits=(lo, hi), colormap=FS.SEQ, label=key == "chi" ? L"\chi" : L"U")
+            Colorbar(fig[1, 2], limits=(lo, hi), colormap=FS.SEQ, label=key == :chi ? L"\chi" : L"U")
         end
-        FS.savefig(fig, joinpath(adir, "sigma_$(key)_L$(L_)_V$(V_)_N$(N_)_Sz$(Sz_).png"))
+        FS.savefig(fig, joinpath(adir, fname))
     end
+end
+
+byU = Dict{Any,Vector{eltype(recs)}}()
+for r in recs; push!(get!(byU, (r.L, r6(r.V), r.N, r.Sz), eltype(recs)[]), r); end
+for ((L_, V_, N_, Sz_), rs) in byU
+    best = [argmax(r -> r.χ, filter(r -> r.U == U, rs)) for U in unique(r.U for r in rs)]
+    length(best) > 1 || continue
+    χs = unique(r.χ for r in best)
+    fixed = "L=$(L_),\\ V=$(V_),\\ N=$(N_)" * (length(χs) == 1 ? ",\\ \\chi\\le$(χs[1])" : "")
+    overlay(best, :U, fixed, "sigma_U_L$(L_)_V$(V_)_N$(N_)_Sz$(Sz_).png")
+end
+
+byχ = Dict{Any,Vector{eltype(recs)}}()
+for r in recs; push!(get!(byχ, (r.L, r.U, r6(r.V), r.N, r.Sz), eltype(recs)[]), r); end
+for ((L_, U_, V_, N_, Sz_), rs) in byχ
+    length(unique(r.χ for r in rs)) > 1 || continue
+    overlay(rs, :chi, "L=$(L_),\\ U=$(U_),\\ V=$(V_),\\ N=$(N_)",
+            "sigma_chi_L$(L_)_U$(U_)_V$(V_)_N$(N_)_Sz$(Sz_).png")
 end

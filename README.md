@@ -8,7 +8,6 @@
 1. `HDMRG_TDVP_production.jl` computes the DMRG ground state $|0\rangle$, applies the current operator, evolves $J|0\rangle$ with TDVP and saves the current–current correlator to `data/tdvp_<tag>.jld2`.
 2. `HDMRG_TDVP_Analysis.jl` reads every `data/tdvp_*.jld2`, Fourier transforms the correlator with a window of width $\eta$ into $\sigma(\omega)$, runs the [checks](#checks) and writes figures and a summary table to `analysis/`.
 
-The production script stores only correlators. Every choice about broadening is made in the analysis, so one production run can be analysed at any $\eta$.
 
 ## Model and operators
 
@@ -161,7 +160,8 @@ Both depend only on $`t_{\max}`$ and $L$, never on $\chi$. Runs of one system th
 **Output** in `analysis/`, in the style of `figstyle.jl`:
 
 - `tdvp_<tag>.{pdf,svg,png}`: (a) $`C_{JJ}(\tau)/C_{JJ}(0)`$, real and imaginary parts; (b) $\sigma(\omega)$ with its peaks marked.
-- `sigma_<U|chi|Uchi>_L.._V.._N.._Sz..`: $\sigma(\omega)$ of all runs sharing $`(L, V, N, S_z)`$, labelled by the parameter that varies.
+- `sigma_U_L.._V.._N.._Sz..`: $\sigma(\omega)$ for the different $U$ at the same $`(L, V, N, S_z)`$, each $U$ at its largest $\chi$.
+- `sigma_chi_L.._U.._V.._N.._Sz..`: $\sigma(\omega)$ for the different $\chi$ of one system, for convergence.
 - `tdvp_summary.csv`: parameters, $\eta$, $E_0$, $\langle T\rangle$, $C_0$, sum rules and target, final $\chi$, the correlator time at which $\chi$ was reached, peak positions (local maxima above 2% of the maximum).
 
 ## Checks
