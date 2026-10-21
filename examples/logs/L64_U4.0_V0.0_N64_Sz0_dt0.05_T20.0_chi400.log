@@ -1,0 +1,23 @@
+[ Info: ── Ground state (Sz=0, N=64) at χ_gs = 400 ...
+[ Info:   E = -100.35183263499314   maxlinkdim = 400   err = 3.38731080272093e-5
+[ Info:   [Timer] GS completed in 0.06 hours.
+[ Info:   [Memory] after GS: 1.945452544e9 
+[ Info:   [Verification] flux(psi_gs) = QN(("Nf",64,-1),("Sz",0))   (target N = 64, Sz = 0)
+[ Info:   ⟨T⟩ = -61.746117886796924   (f-sum rule: ∫_0^∞ σ dω = −π⟨T⟩/2N = 1.515477737037895, checked in the analysis)
+[ Info:   [Verification] C0 = ⟨J²⟩ = 99.1929546047717   flux(φ) == flux(ψ0): true   maxlinkdim(φ0) = 400
+[ Info: ── TDVP: 400 steps of dt = 0.05, χ ≤ 400, cutoff = 1.0e-9 (2-site until χ is reached, then 1-site); Krylov (ishermitian = true, eager = true, tol = 1.0e-8, krylovdim = 15)
+[ Info:   t = 0.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.14459   elapsed 2.6 min, remaining ≈ 52.0 min
+[ Info:   t = 1.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.05437   elapsed 5.4 min, remaining ≈ 50.2 min
+[ Info:   t = 2.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02916   elapsed 8.2 min, remaining ≈ 47.2 min
+[ Info:   t = 3.95   ‖φ‖ = 1.0   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.01895   elapsed 11.0 min, remaining ≈ 44.7 min
+[ Info:   t = 4.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02103   elapsed 13.9 min, remaining ≈ 42.1 min
+[ Info:   t = 5.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02464   elapsed 20.6 min, remaining ≈ 48.6 min
+[ Info:   t = 6.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02452   elapsed 23.0 min, remaining ≈ 43.2 min
+[ Info:   t = 7.95   ‖φ‖ = 0.99999999   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02598   elapsed 25.5 min, remaining ≈ 38.6 min
+[ Info:   t = 8.95   ‖φ‖ = 0.99999998   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.02966   elapsed 28.0 min, remaining ≈ 34.6 min
+[ Info:   t = 9.95   ‖φ‖ = 0.99999998   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.03905   elapsed 30.6 min, remaining ≈ 30.9 min
+[ Info:   t = 10.95   ‖φ‖ = 0.99999998   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.04033   elapsed 33.4 min, remaining ≈ 27.6 min
+[ Info:   t = 11.95   ‖φ‖ = 0.99999997   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.05423   elapsed 36.2 min, remaining ≈ 24.4 min
+[ Info:   t = 12.95   ‖φ‖ = 0.99999997   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.04939   elapsed 39.0 min, remaining ≈ 21.2 min
+[ Info:   t = 13.95   ‖φ‖ = 0.99999997   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.0897   elapsed 42.0 min, remaining ≈ 18.2 min
+[ Info:   t = 14.95   ‖φ‖ = 0.99999997   χ = 400 (1-site)   |C_JJ(2t)|/C0 = 0.33578   elapsed 45.0 min, remaining ≈ 15.2 min
