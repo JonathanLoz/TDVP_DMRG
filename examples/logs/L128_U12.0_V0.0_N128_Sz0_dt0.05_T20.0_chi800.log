@@ -1,0 +1,36 @@
+[ Info: ── Ground state (Sz=0, N=128) at χ_gs = 500 ...
+[ Info:   E = -412.63380382246635   maxlinkdim = 412   err = 2.94703240874894e-6
+[ Info:   [Timer] GS completed in 0.149 hours.
+[ Info:   [Memory] after GS: 2.360098816e9 
+[ Info:   [Verification] flux(psi_gs) = QN(("Nf",128,-1),("Sz",0))   (target N = 128, Sz = 0)
+[ Info:   ⟨T⟩ = -55.8197934323554   (f-sum rule: ∫_0^∞ σ dω = −π⟨T⟩/2N = 0.6850119256718261, checked in the analysis)
+[ Info:   [Verification] C0 = ⟨J²⟩ = 326.1696728319846   flux(φ) == flux(ψ0): true   maxlinkdim(φ0) = 617
+[ Info: ── TDVP: 400 steps of dt = 0.05, χ ≤ 800, cutoff = 1.0e-9 (2-site until χ is reached, then 1-site); Krylov (ishermitian = true, eager = true, tol = 1.0e-8, krylovdim = 15)
+[ Info:   t = 0.95   ‖φ‖ = 0.99999777   χ = 276 (2-site)   |C_JJ(2t)|/C0 = 0.06948   elapsed 11.0 min, remaining ≈ 220.1 min
+[ Info:   t = 1.95   ‖φ‖ = 0.99999535   χ = 432 (2-site)   |C_JJ(2t)|/C0 = 0.02417   elapsed 30.6 min, remaining ≈ 283.1 min
+[ Info:   t = 2.95   ‖φ‖ = 0.99999292   χ = 631 (2-site)   |C_JJ(2t)|/C0 = 0.00992   elapsed 56.7 min, remaining ≈ 327.7 min
+[ Info:   t = 3.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00814   elapsed 91.3 min, remaining ≈ 371.0 min
+[ Info:   t = 4.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00674   elapsed 107.5 min, remaining ≈ 326.8 min
+[ Info:   t = 5.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00113   elapsed 124.0 min, remaining ≈ 292.8 min
+[ Info:   t = 6.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.0054   elapsed 159.4 min, remaining ≈ 299.4 min
+[ Info:   t = 7.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00317   elapsed 175.7 min, remaining ≈ 266.3 min
+[ Info:   t = 8.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00438   elapsed 202.3 min, remaining ≈ 249.8 min
+[ Info:   t = 9.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00169   elapsed 233.7 min, remaining ≈ 236.0 min
+[ Info:   t = 10.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00501   elapsed 250.1 min, remaining ≈ 206.7 min
+[ Info:   t = 11.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00433   elapsed 267.3 min, remaining ≈ 180.0 min
+[ Info:   t = 12.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00353   elapsed 285.1 min, remaining ≈ 155.2 min
+[ Info:   t = 13.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00464   elapsed 302.5 min, remaining ≈ 131.2 min
+[ Info:   t = 14.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.0047   elapsed 319.8 min, remaining ≈ 108.0 min
+[ Info:   t = 15.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00698   elapsed 337.6 min, remaining ≈ 85.7 min
+[ Info:   t = 16.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00792   elapsed 387.1 min, remaining ≈ 69.7 min
+[ Info:   t = 17.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00695   elapsed 402.8 min, remaining ≈ 46.0 min
+[ Info:   t = 18.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00765   elapsed 418.2 min, remaining ≈ 23.2 min
+[ Info:   t = 19.95   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00736   elapsed 469.4 min, remaining ≈ 1.2 min
+[ Info:   t = 20.0   ‖φ‖ = 0.99999121   χ = 800 (1-site)   |C_JJ(2t)|/C0 = 0.00769   elapsed 470.1 min, remaining ≈ 0.0 min
+[ Info:   [Timer] TDVP completed in 7.835 hours.
+[ Info:   [Memory] after TDVP: 4.13155328e9 
+[ Info:   [Verification] |C_JJ(tmax) doubled − direct| / C0 = 0.0246
+[ Info:   [Verification] ‖φ(tmax)‖ = 0.9999912133723887 (1 up to truncation)   final χ = 800
+[ Info:   Saved → data/tdvp_L128_U12.0_V0.0_N128_Sz0_dt0.05_T20.0_chi800.jld2
+[ Info: All MPS checkpoints deleted for L128_U12.0_V0.0_N128_Sz0_dt0.05_T20.0_chi800.
+[ Info:   [Memory] after production run: 4.13155328e9

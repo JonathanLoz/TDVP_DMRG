@@ -1,6 +1,6 @@
 
 
-using JLD2, Printf, CairoMakie
+using JLD2, Printf, CairoMakie, DelimitedFiles
 include(joinpath(@__DIR__, "figstyle.jl"));
 import .FigStyle as FS
 
@@ -27,11 +27,11 @@ r6(x) = round(x, digits=6)
 # ─── Spectrum ────────────────────────────────────────────────────────────────
 
 # σ(ω) from a correlator on a uniform τ grid (trapezoid); kernel = :JJ or :PJ (header).
-function spectrum(τ, C, N, ω, η; kernel)
+function spectrum(τ, C, N, ω, η; kernel, win=window)
     nt = length(τ)
     h  = τ[2] - τ[1]
     w  = fill(h, nt); w[1] /= 2; w[end] /= 2
-    Wt = window == :gauss ? (@. exp(-(η * τ)^2 / 2)) : (@. exp(-η * τ))
+    Wt = win == :gauss ? (@. exp(-(η * τ)^2 / 2)) : (@. exp(-η * τ))
     σ  = similar(ω)
     for (m, ωm) in enumerate(ω)
         if kernel == :JJ
@@ -206,4 +206,72 @@ for ((L_, U_, V_, N_, Sz_), rs) in byχ
     length(unique(r.χ for r in rs)) > 1 || continue
     overlay(rs, :chi, "L=$(L_),\\ U=$(U_),\\ V=$(V_),\\ N=$(N_)",
             "sigma_chi_L$(L_)_U$(U_)_V$(V_)_N$(N_)_Sz$(Sz_).png")
+end
+
+# ─── Comparison with Jeckelmann, Gebhard & Essler, PRL 85, 3910 (2000), Fig. 2 ───────────
+# Their σ₁ = Im χ(ω+iη)/ω (DDMRG, L = 128, Lorentzian η = 0.1) is our lorentz window. Lorentzian
+# widths add on ωσ, so their curve is broadened by η − 0.1 up to an η at which our window closes.
+
+const JGE_DIR   = joinpath(@__DIR__, "..", "reference")
+const JGE_U     = (3, 6, 12)
+const JGE_ETA   = 0.1
+const JGE_ΩMIN  = 0.5     # below this the 1/ω of the Lorentzian tails dominates both curves
+const JGE_DΩ    = 0.25    # spacing of the JGE markers
+const JGE_COL   = ["#0072B2", "#D55E00", "#009E73"]   # one colour per U (Okabe–Ito)
+
+function lininterp(x, xs, ys)
+    i = clamp(searchsortedlast(xs, x), 1, length(xs) - 1)
+    return ys[i] + (ys[i+1] - ys[i]) * (x - xs[i]) / (xs[i+1] - xs[i])
+end
+
+# Their σ(ω) at Lorentzian η ≥ 0.1 on our ω grid, and the end of their data.
+function jge_sigma(U, ω, η)
+    d  = readdlm(joinpath(JGE_DIR, "JGE2000_fig2_U$(U).csv"), ',', Float64; skipstart=1)
+    xs = unique(d[:, 1])                                   # repeated ω are vertical segments
+    As = [(m = d[:, 1] .== x; x * sum(d[m, 2]) / count(m)) for x in xs]
+    δ  = η - JGE_ETA
+    δ <= 0 && return [lininterp(ωm, xs, As) / ωm for ωm in ω], xs[end]
+    xf = range(xs[1], xs[end], length=4000); h = step(xf)
+    Af = [lininterp(x, xs, As) for x in xf]
+    σ  = [h * sum(Af[k] * δ / π / ((ωm - xf[k])^2 + δ^2) for k in eachindex(xf)) / ωm for ωm in ω]
+    return σ, xs[end]
+end
+
+jge_runs = eltype(recs)[]
+for U in JGE_U
+    rs = filter(r -> r.U == U && r.V == 0 && r.N == r.L && r.Sz == 0, recs)
+    isempty(rs) || push!(jge_runs, argmax(r -> (r.L, r.χ), rs))
+end
+
+if !isempty(jge_runs)
+    ηc = round(maximum(max(JGE_ETA, log(1 / WCLOSE) / r.tJJ[end]) for r in jge_runs), sigdigits=3)
+    println("\n── Comparison with JGE Fig. 2 at Lorentzian η = $ηc")
+    with_theme(nogrid) do
+        fig = Figure(size=FS.figsize(:single))
+        ax = Axis(fig[1, 1], xlabel=L"\omega", ylabel=L"\sigma(\omega)",
+                  xticks=LinearTicks(FS.NTICKS), yticks=LinearTicks(FS.NTICKS))
+        top, ωmax = 0.0, 0.0
+        for (j, r) in enumerate(jge_runs)
+            ωend = readdlm(joinpath(JGE_DIR, "JGE2000_fig2_U$(Int(r.U)).csv"), ',', Float64; skipstart=1)[end, 1]
+            ω    = r.ω[(r.ω .>= JGE_ΩMIN) .& (r.ω .<= ωend)]
+            σo   = spectrum(r.tJJ, r.CJJ, r.N, ω, ηc; kernel=:JJ, win=:lorentz)
+            σj, _ = jge_sigma(Int(r.U), ω, ηc)
+            io, ij = argmax(σo), argmax(σj)
+            @printf("   U = %g (L = %d, χ ≤ %d): peak ω = %.3f / %.3f (ours / JGE), σ = %.4f / %.4f\n",
+                    r.U, r.L, r.χ, ω[io], ω[ij], σo[io], σj[ij])
+            c  = JGE_COL[mod1(j, length(JGE_COL))]
+            mk = 1:max(1, round(Int, JGE_DΩ / (ω[2] - ω[1]))):length(ω)
+            lines!(ax, ω, σo, color=c, linewidth=FS.P().lwref, label=L"U=%$(r.U)")
+            scatter!(ax, ω[mk], σj[mk], marker=:circle, color=(:white, 0), strokecolor=c,
+                     strokewidth=0.8 * FS.P().lwthin, markersize=0.65 * FS.P().ms)
+            top, ωmax = max(top, maximum(σo), maximum(σj)), max(ωmax, ωend)
+        end
+        lines!(ax, [NaN], [NaN], color=:black, linewidth=FS.P().lwref, label=L"\mathrm{TDVP}")
+        scatter!(ax, [NaN], [NaN], marker=:circle, color=(:white, 0), strokecolor=:black,
+                 strokewidth=0.8 * FS.P().lwthin, markersize=0.65 * FS.P().ms, label=L"\mathrm{JGE}")
+        xlims!(ax, 0, ωmax)
+        ylims!(ax, 0, 1.15 * top)
+        FS.legend!(fig, ax; position=:rt, maxrows=length(jge_runs) + 2)
+        FS.savefig(fig, joinpath(adir, "sigma_JGE2000.png"))
+    end
 end

@@ -162,6 +162,7 @@ Both depend only on $`t_{\max}`$ and $L$, never on $\chi$. Runs of one system th
 - `tdvp_<tag>.{pdf,svg,png}`: (a) $`C_{JJ}(\tau)/C_{JJ}(0)`$, real and imaginary parts; (b) $\sigma(\omega)$ with its peaks marked.
 - `sigma_U_L.._V.._N.._Sz..`: $\sigma(\omega)$ for the different $U$ at the same $`(L, V, N, S_z)`$, each $U$ at its largest $\chi$.
 - `sigma_chi_L.._U.._V.._N.._Sz..`: $\sigma(\omega)$ for the different $\chi$ of one system, for convergence.
+- `sigma_JGE2000`: comparison with Fig. 2 of [4] for $U = 3, 6, 12$ (see [Checks](#checks)).
 - `tdvp_summary.csv`: parameters, $\eta$, $E_0$, $\langle T\rangle$, $C_0$, sum rules and target, final $\chi$, the correlator time at which $\chi$ was reached, peak positions (local maxima above 2% of the maximum).
 
 ## Checks
@@ -176,7 +177,7 @@ Both depend only on $`t_{\max}`$ and $L$, never on $\chi$. Runs of one system th
 **In the analysis:**
 
 - *Sum rule* against the run's own $\langle T\rangle$.
-- *Dynamical DMRG.* $\sigma(\omega)$ of the half-filled Hubbard chain from dynamical DMRG [4] (figures for $U = 3, 6, 12$).
+- *Dynamical DMRG.* Fig. 2 of [4] gives $\sigma(\omega)$ of the half-filled chain from dynamical DMRG at $L = 128$, $U = 3, 6, 12$, with a Lorentzian $\eta = 0.1$. Their $\sigma_1 = \mathrm{Im}\,\chi(\omega + i\eta)/\omega$ is our `lorentz` window. Their curves, extracted from the vector figure of the arXiv version, are in `reference/JGE2000_fig2_U*.csv`. Lorentzian widths add on $\omega\sigma$, so their curve is broadened by a further Lorentzian to the smallest $\eta$ at which our window closes, $`\max(0.1, \ln 10^3/\tau_{\max})`$, and compared with ours at that $\eta$ for $\omega \ge 0.5$. All $U$ are drawn in one panel, ours as lines and theirs as open circles. For each $U$ the run with the largest $L$, then $\chi$, is used.
 - *Ground-state energies.* Bethe ansatz, $U=4$, infinite chain: $e_0 = -0.57373$ per site in the $`U n_\uparrow n_\downarrow`$ convention, i.e. $-1.57373$ here, and $\langle T\rangle/L = -0.9747$. Open chains differ by boundary corrections of order $1/L$.
 - *Bond dimension.* Compare the $\chi$ runs of one system in the `sigma_chi_*` overlay at the same (`auto`) $\eta$. Signs of truncation: $`\vert C_{JJ}\vert/C_0`$ growing at late $\tau$, a large doubled-vs-direct difference, and features that move or split with $\chi$.
 
