@@ -1,0 +1,18 @@
+[ Info: ── Ground state (Sz=0, N=8) at χ_gs = 100 ...
+[ Info:   E = -12.235806997865732   maxlinkdim = 100   err = 2.998551189777063e-5
+[ Info:   [Timer] GS completed in 0.01 hours.
+[ Info:   [Memory] after GS: 1.075216384e9 
+[ Info:   [Verification] flux(psi_gs) = QN(("Nf",8,-1),("Sz",0))   (target N = 8, Sz = 0)
+[ Info:   ⟨T⟩ = -7.184981222739384   (f-sum rule: ∫_0^∞ σ dω = −π⟨T⟩/2N = 1.410767764096166, checked in the analysis)
+[ Info:   [Verification] C0 = ⟨J²⟩ = 12.828034920299128   flux(φ) == flux(ψ0): true   maxlinkdim(φ0) = 98
+[ Info: ── TDVP: 40 steps of dt = 0.05, χ ≤ 100, cutoff = 1.0e-9 (2-site until χ is reached, then 1-site); Krylov (ishermitian = true, eager = true, tol = 1.0e-8, krylovdim = 15)
+[ Info:   t = 0.95   ‖φ‖ = 1.0   χ = 100 (1-site)   |C_JJ(2t)|/C0 = 0.16571   elapsed 0.4 min, remaining ≈ 0.4 min
+[ Info:   t = 1.95   ‖φ‖ = 1.0   χ = 100 (1-site)   |C_JJ(2t)|/C0 = 0.46738   elapsed 0.4 min, remaining ≈ 0.0 min
+[ Info:   t = 2.0   ‖φ‖ = 1.0   χ = 100 (1-site)   |C_JJ(2t)|/C0 = 0.5308   elapsed 0.4 min, remaining ≈ 0.0 min
+[ Info:   [Timer] TDVP completed in 0.007 hours.
+[ Info:   [Memory] after TDVP: 1.230127104e9 
+[ Info:   [Verification] |C_JJ(tmax) doubled − direct| / C0 = 0.000203
+[ Info:   [Verification] ‖φ(tmax)‖ = 0.9999999990324729 (1 up to truncation)   final χ = 100
+[ Info:   Saved → data/tdvp_L8_U4.0_V0.0_N8_Sz0_dt0.05_T2.0_chi100.jld2
+[ Info: All MPS checkpoints deleted for L8_U4.0_V0.0_N8_Sz0_dt0.05_T2.0_chi100.
+[ Info:   [Memory] after production run: 1.250394112e9

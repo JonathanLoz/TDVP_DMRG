@@ -1,0 +1,7 @@
+[ Info: ── Ground state (Sz=0, N=8) at χ_gs = 100 ...
+[ Info:   E = -12.235806997751503   maxlinkdim = 99   err = 9.192698278803763e-6
+[ Info:   [Timer] GS completed in 0.009 hours.
+[ Info:   [Verification] flux(psi_gs) = QN(("Nf",8,-1),("Sz",0))   (target N = 8, Sz = 0)
+[ Info:   ⟨T⟩ = -7.184981207449314   C0 = ⟨J²⟩ = 12.828034935913625
+[ Info:   [Memory] 1.123762176e9
+[ Info:   Saved → data/gs_L8_U4.0_V0.0_N8_Sz0_chigs100.jld2

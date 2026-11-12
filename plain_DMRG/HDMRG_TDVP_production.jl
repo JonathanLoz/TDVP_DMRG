@@ -22,6 +22,7 @@ const χ       = length(ARGS) >= 8  ? parse(Int,     ARGS[8])  : 400
 const cutoff  = length(ARGS) >= 9  ? parse(Float64, ARGS[9])  : 1e-9
 const χ_gs    = length(ARGS) >= 10 ? parse(Int,     ARGS[10]) : χ
 const PJ      = length(ARGS) >= 11 ? parse(Int,     ARGS[11]) == 1 : false
+const TDVP    = length(ARGS) >= 12 ? parse(Int,     ARGS[12]) == 1 : true
 
 if Threads.nthreads() > 1
     BLAS.set_num_threads(1)
@@ -33,7 +34,7 @@ else
     ITensors.enable_threaded_blocksparse(false)
 end
 
-@info "Running: L=$L  U=$U  V=$V  N=$N_total  Sz=$Sz_tot  dt=$dt  tmax=$tmax  χ=$χ  cutoff=$cutoff  χ_gs=$χ_gs  PJ=$PJ"
+@info "Running: L=$L  U=$U  V=$V  N=$N_total  Sz=$Sz_tot  dt=$dt  tmax=$tmax  χ=$χ  cutoff=$cutoff  χ_gs=$χ_gs  PJ=$PJ  TDVP=$TDVP"
 
 const CKPT_EVERY = 100    # TDVP steps between checkpoints
 const LOG_EVERY  = 20     # TDVP steps between log lines
@@ -42,6 +43,16 @@ const LOG_EVERY  = 20     # TDVP steps between log lines
 # of KrylovKit's default Arnoldi with a fixed 30-vector build per bond. tol is per unit
 # time; keep the default verbosity so a failed convergence is reported.
 const UPDATER_KWARGS = (; ishermitian=true, eager=true, tol=1e-8, krylovdim=15)
+
+# Log to the file and the terminal at once.
+struct Tee <: Logging.AbstractLogger
+    a::Logging.AbstractLogger
+    b::Logging.AbstractLogger
+end
+Logging.min_enabled_level(t::Tee) = min(Logging.min_enabled_level(t.a), Logging.min_enabled_level(t.b))
+Logging.shouldlog(t::Tee, args...) = true
+Logging.handle_message(t::Tee, args...; kw...) =
+    (Logging.handle_message(t.a, args...; kw...); Logging.handle_message(t.b, args...; kw...))
 
 # ─── Types ────────────────────────────────────────────────────────────────
 
@@ -198,7 +209,7 @@ function run_point()
     H, sites, ampo = setup_model(p, L)
 
     io = open(joinpath(logdir, "$(tag).log"), "a")
-    global_logger(ConsoleLogger(io, Logging.Info))
+    global_logger(Tee(ConsoleLogger(io, Logging.Info), ConsoleLogger(stdout, Logging.Info)))
 
     times = collect(0.0:dt:tmax)
     nt    = length(times)
@@ -292,7 +303,7 @@ function run_point()
             @info "  t = $(round(times[k], digits=3))   ‖φ‖ = $(round(norm(phi), digits=8))   " *
                   "χ = $(chi_t[k]) ($(nsite)-site)   |C_JJ(2t)|/C0 = $(round(abs(C_JJ[k]) / C0, digits=5))   " *
                   "elapsed $(round(el/60, digits=1)) min, remaining ≈ $(round(eta_s/60, digits=1)) min"
-            flush(io)
+            flush(io); flush(stdout)
         end
         if k % CKPT_EVERY == 0 && k < nt
             k_done = k
@@ -325,4 +336,42 @@ function run_point()
     close(io)
 end
 
-run_point()
+# ─── Ground state only (TDVP = 0): E₀, ⟨T⟩ and C0 at χ_gs ─────────────────────
+
+function run_gs_only()
+    p = ModelParams(1, -1.0, U, V, 0.0)
+    tag = "L$(L)_U$(U)_V$(V)_N$(N_total)_Sz$(Sz_tot)_chigs$(χ_gs)"
+    mkpath("data"); mkpath("logs")
+    data_file = joinpath("data", "gs_$(tag).jld2")
+    if isfile(data_file)
+        @info "Data already exists for $tag. Nothing to do."
+        return
+    end
+
+    H, sites, ampo = setup_model(p, L)
+    io = open(joinpath("logs", "gs_$(tag).log"), "a")
+    global_logger(Tee(ConsoleLogger(io, Logging.Info), ConsoleLogger(stdout, Logging.Info)))
+
+    @info "── Ground state (Sz=$Sz_tot, N=$N_total) at χ_gs = $χ_gs ..."
+    t_gs = @elapsed begin
+        E_dmrg, psi_gs, err_dmrg = run_dmrg_sz(H, sites, L, N_total, Sz_tot, DMRGConfig(χ_gs))
+    end
+    chi_gs_final = maxlinkdim(psi_gs)
+    @info "  E = $E_dmrg   maxlinkdim = $chi_gs_final   err = $err_dmrg"
+    @info "  [Timer] GS completed in $(round(t_gs / 3600, digits=3)) hours."
+    @info "  [Verification] flux(psi_gs) = $(flux(psi_gs))   (target N = $N_total, Sz = $Sz_tot)"
+
+    # Ground-state inputs of the TDVP: ⟨T⟩ and C0 = ⟨J²⟩ = ⟨J̃ψ|J̃ψ⟩, both exact contractions.
+    Jt   = build_H(current_opsum(p, L), sites)
+    Ekin = real(inner(psi_gs', build_H(hopping_opsum(p, L), sites), psi_gs))
+    C0   = real(inner(Jt, psi_gs, Jt, psi_gs))
+    @info "  ⟨T⟩ = $Ekin   C0 = ⟨J²⟩ = $C0"
+
+    @info "  [Memory] $(round(Sys.maxrss(), digits=2))"
+
+    @save data_file L U V N_total Sz_tot χ_gs chi_gs_final E_dmrg err_dmrg Ekin C0 t_gs
+    @info "  Saved → $data_file"
+    close(io)
+end
+
+TDVP ? run_point() : run_gs_only()

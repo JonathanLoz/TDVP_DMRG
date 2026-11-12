@@ -5,8 +5,9 @@
 
 ## Workflow
 
-1. `HDMRG_TDVP_production.jl` computes the DMRG ground state $|0\rangle$, applies the current operator, evolves $J|0\rangle$ with TDVP and saves the current–current correlator to `data/tdvp_<tag>.jld2`.
-2. `HDMRG_TDVP_Analysis.jl` reads every `data/tdvp_*.jld2`, Fourier transforms the correlator with a window of width $\eta$ into $\sigma(\omega)$, runs the [checks](#checks) and writes figures and a summary table to `analysis/`.
+1. Optionally, `HDMRG_TDVP_production.jl` with `TDVP = 0` computes only the ground state, to converge it in `chi_gs` first ([Ground state only](#ground-state-only)).
+2. `HDMRG_TDVP_production.jl` computes the DMRG ground state $|0\rangle$, applies the current operator, evolves $J|0\rangle$ with TDVP and saves the current–current correlator to `data/tdvp_<tag>.jld2`.
+3. `HDMRG_TDVP_Analysis.jl` reads every `data/tdvp_*.jld2`, Fourier transforms the correlator with a window of width $\eta$ into $\sigma(\omega)$, runs the [checks](#checks) and writes figures and a summary table to `analysis/`.
 
 
 ## Model and operators
@@ -85,8 +86,9 @@ a bilinear (not sesquilinear) contraction, computed as `inner(conj_mps(phi), phi
 ## Production script
 
 ```bash
-julia -t 4 HDMRG_TDVP_production.jl L U V [N_total Sz dt tmax chi cutoff chi_gs PJ]
+julia -t 4 HDMRG_TDVP_production.jl L U V [N_total Sz dt tmax chi cutoff chi_gs PJ TDVP]
 julia -t 4 HDMRG_TDVP_production.jl 64 4.0 0.0 64 0 0.05 20 400 1e-9 400
+julia -t 4 HDMRG_TDVP_production.jl 64 4.0 0.0 64 0 0.05 20 400 1e-9 400 0 0   # ground state only
 ```
 After the running start its possible to monitor the status of the run by using the log and the tag together with a tail call as follows 
 
@@ -104,10 +106,11 @@ tail -f logs/L64_U4.0_V0.0_N64_Sz0_dt0.05_T20.0_chi400.log
 | `cutoff` | two-site TDVP truncation | 1e-9 |
 | `chi_gs` | DMRG bond-dimension cap | `chi` |
 | `PJ` | 1: also measure $`C_{PJ}`$ | 0 |
+| `TDVP` | 0: ground state only (see below) | 1 |
 
 Threads go to block-sparse contractions (BLAS on one thread). The ground state is cached in `states/gs_<tag>.jld2` and the evolution is checkpointed every 100 steps; a killed run resumes from the last checkpoint, and both files are deleted at the end. A run whose data file already exists is skipped.
 
-**Output:** `data/tdvp_<tag>.jld2`, with `tag = L<L>_U<U>_V<V>_N<N>_Sz<Sz>_dt<dt>_T<tmax>_chi<chi>`, and the log `logs/<tag>.log`.
+**Output:** `data/tdvp_<tag>.jld2`, with `tag = L<L>_U<U>_V<V>_N<N>_Sz<Sz>_dt<dt>_T<tmax>_chi<chi>`, and the log `logs/<tag>.log`. Everything logged is also printed to the terminal.
 
 | key | content |
 |---|---|
@@ -118,6 +121,27 @@ Threads go to block-sparse contractions (BLAS on one thread). The ground state i
 | `C_PJ` | $`C_{PJ}(t_k)`$ (zeros unless `PJ = 1`) |
 | `chi_t` | bond dimension of $`\tilde\varphi(t_k)`$ |
 | `norm_end`, `t_tdvp` | $`\Vert\tilde\varphi(t_{\max})\Vert`$, TDVP wall time (s) |
+
+### Ground state only
+
+With `TDVP = 0` the script stops after the ground state, so the ground state can be converged in `chi_gs` before paying for the evolution. Run it for a few values of `chi_gs`, compare $E_0$, $\langle T\rangle$ and $C_0$, and use the smallest `chi_gs` beyond which they no longer change for the TDVP run. A larger `chi_gs` that gives a higher $E_0$ did not converge within its sweeps. `dt`, `tmax`, `chi`, `cutoff` and `PJ` are ignored but must still be given, since the arguments are positional.
+
+```bash
+julia -t 4 HDMRG_TDVP_production.jl 128 3.0 0.0 128 0 0.05 20 800 1e-9 400 0 0
+julia -t 4 HDMRG_TDVP_production.jl 128 3.0 0.0 128 0 0.05 20 800 1e-9 500 0 0
+grep -h "E = \|C0 =" logs/gs_L128_U3.0_*.log
+```
+
+Each run writes `data/gs_<tag>.jld2` and `logs/gs_<tag>.log`, with `tag = L<L>_U<U>_V<V>_N<N>_Sz<Sz>_chigs<chi_gs>`:
+
+| key | content |
+|---|---|
+| `L U V N_total Sz_tot χ_gs` | run parameters |
+| `E_dmrg`, `err_dmrg`, `chi_gs_final` | $E_0$, largest truncation error, final bond dimension |
+| `Ekin`, `C0` | $\langle T\rangle$ and $\langle J^2\rangle$, from exact contractions |
+| `t_gs` | DMRG wall time (s) |
+
+The TDVP run computes its own ground state at the chosen `chi_gs`; it does not read these files. If `states/gs_<tag>.jld2` is left over from a TDVP run of the same tag with a different `chi_gs`, delete it, or that ground state is reused.
 
 ## Analysis script
 

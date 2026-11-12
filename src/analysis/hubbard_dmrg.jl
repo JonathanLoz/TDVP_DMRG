@@ -5,51 +5,28 @@ using JLD2
 #include("../backend/utils.jl")
 
 
-const NOISE_FLOOR = 1e-8    #held at across the bulk of the sweeps
-const N_CLEAN     = 15      # final noise-free sweeps so the observer sees clean convergence
+const N_NOISY = 15    # noisy sweeps at the start of every stage; the rest run clean
 
+# Seeds (bond dim ≤ 16: product or random MPS): bond-dimension ramp, noise 1e-4 for 5 sweeps, then
+# halving to 1e-8. Continuations: target χ, noise 1e-5 halving to 1e-8. Noise-free after N_NOISY sweeps.
 function get_dmrg_results(psi_0, H; maxdim=1024, maxsweeps=10,
     energy_tol=1e-7, observer=nothing)
-    
-    start_dim = maxlinkdim(psi_0)
-    fresh = start_dim <= 32    
-    
-    if fresh
-        ramp = [min(2^(i + 4), maxdim) for i in 1:min(5, maxsweeps)]
-        append!(ramp, fill(maxdim, max(0, maxsweeps - length(ramp))))
-        ramp_len = min(5, maxsweeps)
-        noise = zeros(Float64, maxsweeps)
-        for i in 1:maxsweeps
-            if i <= ramp_len
-                noise[i] = 1e-4
-            elseif i > maxsweeps - N_CLEAN
-                noise[i] = 0.0
-            else
-                noise[i] = max(1e-5 * 0.5^(i - ramp_len - 1), NOISE_FLOOR)  
-            end
-        end
-    else
-        ramp = fill(maxdim, maxsweeps)
 
-        # Warm start: held near NOISE_FLOOR for many sweeps
-        # (soft-mode relaxation), off only for the final N_CLEAN clean-up sweeps.
-        noise = zeros(Float64, maxsweeps)
-        for i in 1:maxsweeps
-            if i > maxsweeps - N_CLEAN
-                noise[i] = 0.0
-            else
-                noise[i] = max(1e-5 * 0.5^(i - 1), NOISE_FLOOR)  # 1e-5 → floor, held
-            end
-        end
+    seed = maxlinkdim(psi_0) <= 16
+    nr = seed ? min(5, maxsweeps) : 0
+    ramp = [i <= nr ? min(2^(i + 4), maxdim) : maxdim for i in 1:maxsweeps]
+    noise = zeros(Float64, maxsweeps)
+    for i in 1:min(N_NOISY, maxsweeps)
+        noise[i] = i <= nr ? 1e-4 : max(1e-5 * 0.5^(i - nr - 1), 1e-8)
     end
 
     obs = isnothing(observer) ? DMRGObserver(; energy_tol=energy_tol) : observer
-    
+
     return dmrg(H, psi_0;
         nsweeps=maxsweeps,
         noise=noise,
         maxdim=ramp,
-        cutoff=1e-12, 
+        cutoff=1e-12,
         observer=obs,
     )
 end
